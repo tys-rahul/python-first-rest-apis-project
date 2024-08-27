@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
 from models import TagModel, StoreModel, ItemModel
-from schemas import TagSchema, TagAndItemSchema, ErrorSchema  # Import ErrorSchema
+from schemas import TagSchema, TagAndItemSchema, ErrorSchema  # Ensure ErrorSchema is defined
 
 blp = Blueprint("Tags", "tags", description="Operations on tags")
 
@@ -66,7 +66,7 @@ class LinkTagsToItem(MethodView):
 @blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
     @blp.response(200, TagSchema)
-    @blp.alt_response(404, description="Tag not found.")
+    @blp.alt_response(404, description="Tag not found.", schema=ErrorSchema)  # Use schema for 404 response
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
@@ -76,10 +76,11 @@ class Tag(MethodView):
         description="Deletes a tag if no item is tagged with it.",
         example={"message": "Tag deleted."}
     )
-    @blp.alt_response(404, description="Tag not found.")
+    @blp.alt_response(404, description="Tag not found.", schema=ErrorSchema)  # Use schema for 404 response
     @blp.alt_response(
         400,
         description="Returned if the tag is assigned to one or more items. In this case, the tag is not deleted.",
+        schema=ErrorSchema  # Use schema for 400 response
     )
     def delete(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
