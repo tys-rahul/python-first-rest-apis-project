@@ -66,7 +66,7 @@ class LinkTagsToItem(MethodView):
 @blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
     @blp.response(200, TagSchema)
-    @blp.alt_response(404, description="Tag not found.", schema=ErrorSchema)
+    @blp.alt_response(404, description="Tag not found.")
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
@@ -76,11 +76,10 @@ class Tag(MethodView):
         description="Deletes a tag if no item is tagged with it.",
         example={"message": "Tag deleted."}
     )
-    @blp.alt_response(404, description="Tag not found.", schema=ErrorSchema)
+    @blp.alt_response(404, description="Tag not found.")
     @blp.alt_response(
         400,
         description="Returned if the tag is assigned to one or more items. In this case, the tag is not deleted.",
-        schema=ErrorSchema
     )
     def delete(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
